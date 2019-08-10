@@ -4,52 +4,18 @@
 #include <math.h>
 #define GIRLS_MAX 1000000000
 #define SQ_MAX 31624
-int mindiv(int v)
+int isPrime(int n)
 {
-	int div = 1;
-	if(v == 1 || v == 2) {
-		return div;
-	}else if(v >2){
-		int i,end = v/2;
-		for(i = 2;i<=end;i++){
-			if(v % i == 0){
-				div = v;
-				break;
-			}
-		}
-	}
-	return div;
-}
-int div_count(int n)
-{
-	int count = 0;
-	int i;
-	
-	if(n == 1 || n == 2){
-	return 0;
-	}
-	double s = n*1.0,sq = 0.0;
-	
-	sq = sqrt(s);
-	for(i = 2;i*1.0<sq;i++){
-		if(n%i == 0){
-			count++;
-		}
-	} 
-	return count;
-}
-bool isPrime(int n)
-{
-		bool ret = true;
-	if(n == 2){
-		return true;
+	int ret = 0;
+	if(n == 2 || n == 1){
+		return 0;
 	}else{
 		double r = sqrt(n*1.0);
 		int i;
 
 		for(i = 2; i <= r; i++){
 			if(n % i == 0){
-				ret = false;
+				ret = i;
 				break;
 			}
 		}
@@ -68,6 +34,16 @@ int create_prime_table(int a[],int num)
 	}
 	return j;
 }
+int findIndex(int prime_table[],int num,int key)
+{
+	int i;
+	for(i = 0; i < num; i++){
+		if(key == prime_table[i]){
+			break;
+		}
+	}
+	return i;
+}
 int main()
 {
 	int times = 0;
@@ -76,20 +52,47 @@ int main()
 	char *current_state_array = (char *)malloc((GIRLS_MAX+1)*sizeof(char));
 
 
-	int i,divcount = 0;
+	int i;
 	memset(current_state_array,1,(GIRLS_MAX+1)*sizeof(char));
-
 
 	int prime_table[SQ_MAX],table_len = 0;
 	memset(prime_table,0,SQ_MAX*sizeof(int));
 	table_len = create_prime_table(prime_table,SQ_MAX);
+		
+	printf("prime max == %d\n",prime_table[table_len-1]);
+	return 0;
+	int exp_count[SQ_MAX];
+	memset(exp_count,0,SQ_MAX*sizeof(int));
 	
-	for(i = 0; i<table_len; i++){
-		if(i %20 == 0){printf("\n");}
-		printf("%d ",prime_table[i]);
+	int mindiv = 0;
+	int index = 0;
+	int j;
+	int value;
+	int is_prime = 0;
+	for(i = 2; i<= GIRLS_MAX; i++){
+		value = i;
+		mindiv = isPrime(value);
+		if(mindiv == 0){
+			current_state_array[i] = 0;
+		}else{
+			index = findIndex(prime_table,SQ_MAX,mindiv);
+			
+			exp_count[index]++;
+			value = value/mindiv;
+			
+			is_prime = isPrime(value);
+			while(is_prime != 0)
+			{
+				
+			}
+			index = findIndex(prime_table,SQ_MAX,value);
+			exp_count[index]++;
+			value = 1;
+		}	
 	}
 	
 
+	
 	scanf("%d",&times);
 	
 	while(times--)
@@ -103,8 +106,9 @@ int main()
 		}
 		printf("%d\n",girls_take);
 	}
+	
+	
 	free(current_state_array);
-
 	current_state_array = NULL;
 
 	return 0;
